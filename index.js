@@ -83,11 +83,23 @@ client.connect((err) => {
     });
   });
 
-  //delete product from the database
+  //delete order from the database
   app.delete("/deleteOrder/:id", async (req, res) => {
     console.log(req.params.id);
 
     ordersCollection
+      .deleteOne({ _id: ObjectId(req.params.id) })
+      .then((result) => {
+        res.send(result);
+      });
+  });
+
+
+  //delete product from the database
+  app.delete("/deleteProduct/:id", async (req, res) => {
+    console.log(req.params.id);
+
+    productsCollection
       .deleteOne({ _id: ObjectId(req.params.id) })
       .then((result) => {
         res.send(result);
@@ -150,6 +162,19 @@ client.connect((err) => {
       });
   });
 });
+
+// status update
+  app.put("/statusUpdate/:id", async (req, res) => {
+    const filter = { _id: ObjectId(req.params.id) };
+    console.log(req.params.id);
+    const result = await ordersCollection.updateOne(filter, {
+      $set: {
+        status: req.body.status,
+      },
+    });
+    res.send(result);
+    console.log(result);
+  });
 
 app.get("/", (req, res) => {
   res.send("Hello!!!");
